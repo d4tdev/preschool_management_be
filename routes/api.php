@@ -24,6 +24,7 @@ Route::controller(\App\Http\Controllers\AuthController::class)
              Route::post('register', 'register');
              Route::post('refresh', 'refresh');
              Route::post('logout', 'logout');
+             Route::delete('/{id}', 'deleteUser');
          }
      );
 

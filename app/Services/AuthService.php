@@ -9,13 +9,16 @@ use App\Repositories\Repository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
-class AuthService extends AbstractService {
+class AuthService extends AbstractService
+{
     protected Repository $userRepo;
+
     public function __construct(protected User $user)
     {
         $this->userRepo = new Repository($user);
     }
-    public function login(LoginRequest $request) : string | null
+
+    public function login(LoginRequest $request): string|null
     {
         return auth()->attempt($request->validated());
     }
@@ -23,7 +26,7 @@ class AuthService extends AbstractService {
     public function register(Request $request)
     {
         $check = $this->userRepo->getInstance()->where('email', $request->email)
-            ->count();
+                                ->count();
 
         if (!empty($check)) {
             throw new \Exception('errors.email_exist');
@@ -60,5 +63,16 @@ class AuthService extends AbstractService {
         return $this->userRepo->pushCriteria(
             new SortAndFilterUserCriteria($filters, $sorts, $search)
         )->paginate($limit);
+    }
+
+    public function getUser($id)
+    {
+        return $this->userRepo->find($id);
+    }
+
+    public function deleteUser($id)
+    {
+        $user = $this->getUser($id);
+        return $user->delete();
     }
 }

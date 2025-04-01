@@ -19,7 +19,7 @@ class AuthController extends Controller
                     'login',
                     'refresh',
                     'register',
-                    'listUser'
+                    'listUser',
                 ],
             ]
         );
@@ -84,5 +84,11 @@ class AuthController extends Controller
         $list = $this->authService->listUser($filters, $sorts, $search, $limit);
 
         return response()->json(['code' => 200, 'data' => UserResource::collection($list)]);
+    }
+
+    public function deleteUser(Request $request)
+    {
+        $this->authService->deleteUser($request->id);
+        return response()->json(['success' => true]);
     }
 }
