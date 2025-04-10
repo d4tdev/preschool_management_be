@@ -2,10 +2,13 @@
 
 namespace App\Services;
 
+use App\Mail\AttendanceMail;
 use App\Models\Attendance;
+use App\Models\Student;
 use App\Repositories\Criteria\Attendance\SortAndFilterAttendanceCriteria;
 use App\Repositories\Repository;
 use App\Services\AbstractService;
+use Illuminate\Support\Facades\Mail;
 
 class AttendanceService extends AbstractService {
     protected Repository $attendanceRepo;
@@ -38,7 +41,11 @@ class AttendanceService extends AbstractService {
 
     public function createOrUpdate($data)
     {
-        return $this->attendanceRepo->updateOrCreate(['student_id' => $data['student_id'], 'date' => $data['date']], $data);
+        $res = $this->attendanceRepo->updateOrCreate(['student_id' => $data['student_id'], 'date' => $data['date']], $data);
+        $student = Student::where('id', $data['student_id'])->with(['parent', 'class.teacher'])->first();
+
+        Mail::to($student->parent->email)->queue(new AttendanceMail($data, $student));
+        return $res;
     }
 
     public function delete($id)

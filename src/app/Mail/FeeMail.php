@@ -24,6 +24,6 @@ protected $data;
     public function build()
     {
         return $this->view('mail.fee')->with($this->data)
-            ->subject("Thanh toán học phí");
+            ->subject("Thông báo học phí");
     }
 }

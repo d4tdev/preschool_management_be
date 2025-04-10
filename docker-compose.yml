@@ -1,0 +1,74 @@
+services:
+  # MySQL 8
+  mysql-preschool:
+    image: mysql:8
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      MYSQL_USER: "${MYSQL_USER}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+    ports:
+      - "33306:3306"
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+      - ./docker/etc/mysql/my.cnf:/etc/mysql/my.cnf
+      - ./docker/etc/mysql/init.sh:/docker-entrypoint-initdb.d/init.sh
+    networks:
+      - laravel_network
+
+  # Nginx với HTTPS
+  app:
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./src:/var/www/html
+      - ./docker/certs:/etc/ssl/certs
+    networks:
+      - laravel_network
+
+  # Redis
+  redis-preschool:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    ports:
+      - "26379:6379"
+    volumes:
+      - ./docker/etc/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    networks:
+      - laravel_network
+
+  # phpMyAdmin
+  phpmyadmin-preschool:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+    ports:
+      - "8080:80"
+    networks:
+      - laravel_network
+    depends_on:
+      - mysql-preschool
+    extra_hosts:
+      - "${PHPMYADMIN_DOMAIN}:172.18.0.3"
+
+networks:
+  laravel_network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+    driver: local

@@ -1,0 +1,17 @@
+server {
+    listen 80;
+    server_name mailpit.sougo-kankyo.local;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name mailpit.sougo-kankyo.local;
+
+    ssl_certificate /etc/ssl/certs/server.crt;
+    ssl_certificate_key /etc/ssl/certs/server.key;
+
+    location / {
+        proxy_pass http://mailpit-sougo:8025;
+    }
+}
