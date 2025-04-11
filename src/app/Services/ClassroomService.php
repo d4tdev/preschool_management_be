@@ -3,15 +3,20 @@
 namespace App\Services;
 
 use App\Models\Classroom;
+use App\Models\User;
 use App\Repositories\Criteria\Classroom\SortAndFilterClassroomCriteria;
 use App\Repositories\Repository;
 use App\Services\AbstractService;
 
-class ClassroomService extends AbstractService {
+class ClassroomService extends AbstractService
+{
     protected Repository $classroomRepo;
-    public function __construct(Classroom $classroom)
+    protected Repository $userRepo;
+
+    public function __construct(Classroom $classroom, User $user)
     {
         $this->classroomRepo = new Repository($classroom);
+        $this->userRepo = new Repository($user);
     }
 
     public function getList($filters, $sorts, $search, $limit)
@@ -28,11 +33,19 @@ class ClassroomService extends AbstractService {
 
     public function create($data)
     {
-        return $this->classroomRepo->create($data);
+
+        $data = $this->classroomRepo->create($data);
+        $this->userRepo->update($data['teacher_id'], [
+            'class_id' => $data->id
+        ]);
+        return $data;
     }
 
     public function update($id, $data)
     {
+        $this->userRepo->update($data['teacher_id'], [
+            'class_id' => $id
+        ]);
         return $this->classroomRepo->update($id, $data);
     }
 
