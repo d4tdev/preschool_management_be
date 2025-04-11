@@ -10,6 +10,7 @@ class Situation extends BaseModel
     use HasFactory;
 
     protected $fillable = [
+        'id',
         'student_id',
         'subject_id',
         'day',

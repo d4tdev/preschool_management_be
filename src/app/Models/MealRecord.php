@@ -12,6 +12,7 @@ class MealRecord extends BaseModel
     protected $table = 'meal_records';
 
     protected $fillable = [
+        'id',
         'student_id',
         'meal_id',
         'status',

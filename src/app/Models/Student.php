@@ -12,6 +12,7 @@ class Student extends BaseModel
     protected $table = 'students';
 
     protected $fillable = [
+        'id',
         'first_name',
         'last_name',
         'birthday',
@@ -29,6 +30,6 @@ class Student extends BaseModel
 
     public function class()
     {
-        return $this->belongsTo(ClassRoom::class, 'class_id', 'id');
+        return $this->belongsTo(Classroom::class, 'class_id', 'id');
     }
 }

@@ -12,6 +12,7 @@ class Fee extends BaseModel
     protected $table = 'fees';
 
     protected $fillable = [
+        'id',
         'student_id',
         'amount',
         'description',

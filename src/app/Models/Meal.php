@@ -10,6 +10,7 @@ class Meal extends BaseModel
     use HasFactory;
     protected $table = 'meals';
     protected $fillable = [
+        'id',
         'name',
         'created_by',
         'updated_by'

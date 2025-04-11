@@ -10,6 +10,7 @@ class Subject extends BaseModel
     use HasFactory;
     protected $table = 'subjects';
     protected $fillable = [
+        'id',
         'name',
         'created_by',
         'updated_by'
